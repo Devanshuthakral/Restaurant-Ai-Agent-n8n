@@ -169,7 +169,7 @@ Inventory   FAQ     Post Order
 **Devanshu Thakral**
 
 LinkedIn:
-https://www.linkedin.com/in/devanshu-thakral-6297a12b9
+https://www.linkedin.com/in/devanshuthakral/
 
 GitHub:
 https://github.com/DevanshuThakral
