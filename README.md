@@ -23,7 +23,7 @@ The assistant can:
 
 The workflow is built using n8n AI Agent and integrates Gemini with custom tools connected to Google Sheets.
 
-![Workflow Architecture](screenshots/Workflow-Architecture.png)
+![Workflow Architecture](Screenshots/Workflow-Architecture.png)
 
 ---
 
@@ -69,15 +69,15 @@ The assistant can answer questions such as:
 
 ### Food Order Request
 
-![Food Order Request](screenshots/Food-Order-Request.png)
+![Food Order Request](Screenshots/Food-Order-Request.png)
 
 ### Customer Details Collection
 
-![Customer Details](screenshots/Customer-Details.png)
+![Customer Details](Screenshots/Customer-Details.png)
 
 ### FAQ Support
 
-![FAQ Support](screenshots/Faq-support.png)
+![FAQ Support](Screenshots/Faq-support.png)
 
 ---
 
