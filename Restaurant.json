@@ -1,0 +1,318 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "35db329b-156b-450d-abd0-0b178b0520d0",
+      "name": "When chat message received",
+      "webhookId": "ddc4015d-2703-4a37-9b67-5ab59f9ede17"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "IMPORTANT:\n\nYou must NEVER assume customer details.\n\nIf a user wants to place an order and any of the following information is missing:\n\n- Customer Name\n- Phone Number\n- Food Item\n- Quantity\n\nYou MUST ask for the missing information first.\n\nDo NOT confirm any order.\n\nDo NOT create any order.\n\nDo NOT say an order is placed.\n\nOnly after collecting all required information should you use the available tools.\n\nYou are a smart food ordering assistant for \"MDA Restaurant\".\n\nRules:\n\n1. When a user sends their first message (like hi, hello), reply with:\n\nWelcome to MDA Restaurant 🍽️\nHow can I help you today?\n\n* 🛒 Place an order\n* ℹ️ FAQ / Information\n* 📦 Check order / stock\n\n(Keep the tone friendly like a food delivery app, not like a product e-commerce site)\n\n2. If user wants to place an order:\n\nIMPORTANT:\nBefore confirming any order, you MUST collect:\n\n* Customer Name\n* Phone Number\n* Food Item\n* Quantity\n\nAsk for missing details one by one.\n\nExample:\n\nUser: I want Veg Thali\n\nAssistant: Sure 😊 May I know your name?\n\nUser: Devanshu\n\nAssistant: Please share your phone number.\n\nUser: 9876543210\n\nAssistant: How many Veg Thalis would you like?\n\nUser: 2\n\nAssistant: Thanks 👍 Let me check availability.\n\nOnly after collecting ALL details:\n\n* Check Inventory sheet before confirming\n* If available:\n  \"Your order for Veg Thali (x quantity) is confirmed ✅\"\n* If not available:\n  \"Sorry, Veg Thali is out of stock ❌. Available options: [list items]\"\n\nOnly confirmed orders go into the Orders sheet.\n\nIn Orders sheet always include:\n\n* Customer Name\n* Phone Number\n* Food Item\n* Quantity\n* Status = Confirmed / Rejected\n* Description = \"Order accepted (item available)\" OR \"Order rejected (out of stock)\"\n\nDO NOT create an order if Name or Phone Number is missing.\n\n3. If user wants FAQ:\n\n* Answer short and clear (delivery time, payment method, restaurant hours)\n\n4. If user wants check order or check stock:\n\n* Ask for food name or order id\n* Look up in Google Sheets (Orders / Inventory)\n\nIf checking order:\n\n* Reply with status (Confirmed / Rejected / Cancelled / Delivered)\n\nIf checking stock:\n\n* Reply with available quantity of that food\n\nIf requested, also list all available food items with quantity.\n\n5. If user wants cancel order:\n\nReply politely:\n\nSorry 🙏 I cannot cancel orders directly.\nPlease call the restaurant owner first and inform them.\nOwner Contact: +95 1224567890\n\n6. Always reply in short text like a normal WhatsApp chat.\n\n* Do not use bold or long paragraphs\n* Use *stars* only for highlighting words*\n* Keep tone friendly, polite, and food-delivery app style\n\n7. Never place an order until:\n\n* Customer Name is collected\n* Phone Number is collected\n* Food Item is collected\n* Quantity is collected\n* Inventory is checked\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "5d48399e-7310-4cc4-9d00-0c2bace5c7bc",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -32,
+        208
+      ],
+      "id": "8daa3318-c4a1-402d-b4b2-de784349c47a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "3IBcgLyBRAdEPhDf",
+          "name": "Google Gemini(PaLM) Api account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "inventory-chat",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        160,
+        224
+      ],
+      "id": "28a227c7-07eb-4202-a5fc-9c97ed73dab9",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Food menu lookup tool.\n\nInput: food_item\n\nUse this tool whenever a user asks about:\n- food items\n- menu\n- prices\n- availability\n- restaurant items\n- dishes\n- delivery options\n\nAlways call this tool first before answering.\n\nReturns:\n- food item name\n- price\n- availability status\n- category\n- delivery details",
+        "documentId": {
+          "__rl": true,
+          "value": "1MwdwTYvfJ-MW3gZm3Ib8cqQVTtinyLjJHcmzbAQWqjo",
+          "mode": "list",
+          "cachedResultName": "Food Delivery System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MwdwTYvfJ-MW3gZm3Ib8cqQVTtinyLjJHcmzbAQWqjo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 224745555,
+          "mode": "list",
+          "cachedResultName": "Inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MwdwTYvfJ-MW3gZm3Ib8cqQVTtinyLjJHcmzbAQWqjo/edit#gid=224745555"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        320,
+        208
+      ],
+      "id": "b5f8f3c7-da21-45da-bad5-c23819e3f568",
+      "name": "Get inventory",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aAIkwvJb9kLUzFQP",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1MwdwTYvfJ-MW3gZm3Ib8cqQVTtinyLjJHcmzbAQWqjo",
+          "mode": "list",
+          "cachedResultName": "Food Delivery System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MwdwTYvfJ-MW3gZm3Ib8cqQVTtinyLjJHcmzbAQWqjo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 541751037,
+          "mode": "list",
+          "cachedResultName": "FAQ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MwdwTYvfJ-MW3gZm3Ib8cqQVTtinyLjJHcmzbAQWqjo/edit#gid=541751037"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        464,
+        208
+      ],
+      "id": "e6964c29-4c5c-4674-8b5e-99a30a5e9b3a",
+      "name": "Get FAQ",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aAIkwvJb9kLUzFQP",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1MwdwTYvfJ-MW3gZm3Ib8cqQVTtinyLjJHcmzbAQWqjo",
+          "mode": "list",
+          "cachedResultName": "Food Delivery System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MwdwTYvfJ-MW3gZm3Ib8cqQVTtinyLjJHcmzbAQWqjo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 676783310,
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MwdwTYvfJ-MW3gZm3Ib8cqQVTtinyLjJHcmzbAQWqjo/edit#gid=676783310"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Customer_Name', `Customer full name.\nIf missing, do not call the tool.\nAsk the user for their name first.`, 'string') }}",
+            "Quantity Ordered": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Quantity_Ordered', `Quantity of food ordered.\nIf missing, ask the customer for quantity.\nDo not call the tool if quantity is missing.`, 'string') }}",
+            "Food Item": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Food_Item', `Check Inventory\n\nUse this tool EVERY TIME before confirming any food order.\n\nInput:\nFood Item\n\nReturns:\nFood Item\nAvailable Quantity\nStock Status\n\nIf item is out of stock:\nDo NOT ask quantity.\nDo NOT create order.\nInform customer that item is unavailable and show available items.\n\nThis tool must be used before any order confirmation.`, 'string') }}",
+            "Order Date": "={{ $now.format('yyyy-MM-dd hh-mm-ss a') }}",
+            "Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Status', `Set to Confirmed if inventory is available.\nSet to Rejected if inventory is unavailable.`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Customer Name",
+              "displayName": "Customer Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Food Item",
+              "displayName": "Food Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Quantity Ordered",
+              "displayName": "Quantity Ordered",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Order Date",
+              "displayName": "Order Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        208
+      ],
+      "id": "5750d706-c016-4039-817e-637bb5e671af",
+      "name": "Post order",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aAIkwvJb9kLUzFQP",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get inventory": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get FAQ": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post order": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "8cc44531-1a4e-4245-9abd-1aaad24d4782",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d1f572ff3a1aaec16ac6fddb7e94eb4bb6e6b2deefe679df390452acd6d19671"
+  },
+  "nodeGroups": [],
+  "id": "GGxxrKg1mq6rHYd3",
+  "tags": []
+}
